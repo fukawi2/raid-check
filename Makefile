@@ -9,7 +9,7 @@ D_BIN=/usr/local/sbin
 D_CNF=/etc
 
 ### Lists of files to be installed
-F_CONF=raid-check.conf
+F_CONF=raid-check.conf raid-check.cron
 
 ###############################################################################
 
@@ -32,11 +32,14 @@ bin: $(PROJECT).sh test
 
 config: $(F_CONF)
 	# Install (without overwriting) configuration files
-	for f in $(F_CONF) ; do \
-		[[ -e $(DESTDIR)$(D_CNF)/$$f ]] || \
-			install -D -m 0644 $$f $(DESTDIR)$(D_CNF)/$$f ; \
-	done
+	if [ ! -e $(DESTDIR)$(D_CNF)/raid-check.conf ] ; then \
+		install -D -m 0644 raid-check.conf $(DESTDIR)$(D_CNF)/raid-check.conf ; \
+	fi
+	if [ ! -e $(DESTDIR)$(D_CNF)/raid-check ] ; then \
+		install -D -m 0644 raid-check.cron $(DESTDIR)$(D_CNF)/raid-check ; \
+	fi
 
 uninstall:
 	rm -f $(DESTDIR)$(D_BIN)/$(PROJECT)
+	rm -f $(DESTDIR)$(D_CNF)/raid-check
 	@echo "Leaving '$(DESTDIR)$(D_CNF)' untouched"
