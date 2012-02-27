@@ -1,0 +1,15 @@
+###############################################################################
+
+This script is extracted from the RedHat 'mdadm' package.
+
+There is nothing RedHat / CentOS / rpm specific in this so it should work on
+any Linux system with the `proc` and `sysfs` psuedo-filesystems.
+
+###############################################################################
+
+# How to Recreate / Update
+  $ wget http://ftp.redhat.com/pub/redhat/linux/enterprise/6Server/en/os/SRPMS/mdadm-3.2.2-9.el6.src.rpm
+  $ rpm2cpio mdadm-3.2.2-9.el6.src.rpm | cpio -idmv
+  $ mv raid-check raid-check.sh
+  $ mv mdadm-raid-check-sysconfig raid-check.conf 
+  $ sed -e 's|/sysconfig/raid-check|/raid-check.conf|g' -i raid-check.sh
