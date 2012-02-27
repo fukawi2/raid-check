@@ -13,3 +13,5 @@ any Linux system with the `proc` and `sysfs` psuedo-filesystems.
   $ mv raid-check raid-check.sh
   $ mv mdadm-raid-check-sysconfig raid-check.conf 
   $ sed -e 's|/sysconfig/raid-check|/raid-check.conf|g' -i raid-check.sh
+  $ mv mdadm-cron raid-check.cron
+  $ sed -e 's|/usr/sbin/|/usr/local/sbin/|g' -i raid-check.cron 
