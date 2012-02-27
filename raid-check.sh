@@ -4,6 +4,8 @@
 # Please use that file to enable/disable this script or to set the
 # type of check you wish performed.
 
+PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
 # We might be on a kernel with no raid support at all, exit if so
 [ -f /proc/mdstat ] || exit 0
 
