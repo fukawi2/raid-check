@@ -1,4 +1,8 @@
 ###############################################################################
+# ABOUT RAID-CHECK
+
+Script that should be run regularly on systems running software RAID (mdadm) to
+perform "scrubbing" (http://en.wikipedia.org/wiki/Data_scrubbing#In_RAID)
 
 This script is extracted from the RedHat 'mdadm' package.
 
@@ -6,8 +10,23 @@ There is nothing RedHat / CentOS / rpm specific in this so it should work on
 any Linux system with the `proc` and `sysfs` psuedo-filesystems.
 
 ###############################################################################
+# INSTALLATION
 
-# How to Recreate / Update
+To install, just clone the repository using git and use the Makefile:
+
+  # git clone <uri>
+  # make install
+
+Possible URI's are:  
+  git://github.com/fukawi2/raid-check.git
+  https://github.com/fukawi2/raid-check.git
+  http://github.com/fukawi2/raid-check.git
+
+NOTE: This will automatically install a cron entry (via /etc/cron.d/) to run
+this script weekly.
+
+###############################################################################
+# HOW TO RECREATE OR UPDATE
   $ wget http://ftp.redhat.com/pub/redhat/linux/enterprise/6Server/en/os/SRPMS/mdadm-3.2.2-9.el6.src.rpm
   $ rpm2cpio mdadm-3.2.2-9.el6.src.rpm | cpio -idmv
   $ mv raid-check raid-check.sh
@@ -15,3 +34,4 @@ any Linux system with the `proc` and `sysfs` psuedo-filesystems.
   $ sed -e 's|/sysconfig/raid-check|/raid-check.conf|g' -i raid-check.sh
   $ mv mdadm-cron raid-check.cron
   $ sed -e 's|/usr/sbin/|/usr/local/sbin/|g' -i raid-check.cron 
+###############################################################################
