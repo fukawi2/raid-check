@@ -2,7 +2,7 @@
 PROJECT=raid-check
 
 ### Dependencies
-DEP_BINS=grep cat sleep awk ps renice ionice
+DEP_BINS=grep cat sleep awk ps renice ionice logger
 
 ### Destination Paths
 D_BIN=/usr/local/sbin
