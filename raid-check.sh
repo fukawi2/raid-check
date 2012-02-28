@@ -15,8 +15,8 @@ PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
 [ "$ENABLED" != "yes" ] && exit 0
 
-LOGGER="logger -t 'raid-check' -i"
-$LOGGER "Starting raid-check"
+LOGGER="logger -t 'raid-check' -i -p user."
+${LOGGER}info "Starting raid-check"
 
 case "$CHECK" in
     check) ;;
@@ -26,7 +26,7 @@ esac
 
 ionice=""
 renice=""
-$LOGGER "Check/Rebuild priority is $NICE"
+${LOGGER}info "Check/Rebuild priority is $NICE"
 case $NICE in
     high)
 	renice="-n -5"
@@ -45,7 +45,7 @@ esac
 
 active_list=`grep "^md.*: active" /proc/mdstat | cut -f 1 -d ' '`
 [ -z "$active_list" ] && exit 0
-$LOGGER "Active mdadm arrays are $active_list"
+${LOGGER}info "Active mdadm arrays are $active_list"
 
 declare -A check
 dev_list=""
@@ -59,19 +59,19 @@ for dev in $active_list; do
 	# when two or more arrays are on the same physical disk
 	array_state=`cat /sys/block/$dev/md/array_state`
 	if [ "$array_state" != "clean" -a "$array_state" != "active" ]; then
-      $LOGGER "Skipping array $dev because it is in state $array_state"
+      ${LOGGER}warning "Skipping array $dev because it is in state $array_state"
 	    continue
 	fi
 	sync_action=`cat /sys/block/$dev/md/sync_action`
 	if [ "$sync_action" != idle ]; then
-      $LOGGER "Skipping array $dev because it is currently performing action $sync_action"
+      ${LOGGER}warning "Skipping array $dev because it is currently performing action $sync_action"
 	    continue
 	fi
 	ck=""
 	echo $REPAIR_DEVS | grep -w $dev >&/dev/null && ck="repair"
 	echo $CHECK_DEVS | grep -w $dev >&/dev/null && ck="check"
 	[ -z "$ck" ] && ck=$CHECK
-  $LOGGER "Going to perform a $ck on array $dev"
+  ${LOGGER}info "Going to perform a $ck on array $dev"
 	dev_list="$dev_list $dev"
 	check[$dev]=$ck
 	[ "$ck" = "check" ] && check_list="$check_list $dev"
@@ -80,7 +80,7 @@ done
 [ -z "$dev_list" ] && exit 0
 
 for dev in $dev_list; do
-    $LOGGER "Telling kernel to start ${check[$dev]} of $dev"
+    ${LOGGER}info "Telling kernel to start ${check[$dev]} of $dev"
     echo "${check[$dev]}" > /sys/block/$dev/md/sync_action
 
     resync_pid=""
@@ -91,7 +91,7 @@ for dev in $dev_list; do
 	resync_pid=$(ps -ef | awk -v mddev=$dev 'BEGIN { pattern = "^\\[" mddev "_resync]$" } $8 ~ pattern { print $2 }')
     done
     [ -n "$resync_pid" -a -n "$renice" ] &&
-      $LOGGER "Resync pid is $resync_pid; Adjusting nice and ionice levels"
+      ${LOGGER}info "Resync pid is $resync_pid; Adjusting nice and ionice levels"
     [ -n "$resync_pid" -a -n "$renice" ] &&
     	renice $renice -p $resync_pid >&/dev/null
     [ -n "$resync_pid" -a -n "$ionice" ] &&
@@ -108,7 +108,7 @@ do
 	sync_action=`cat /sys/block/$dev/md/sync_action`
 		if [ "$sync_action" != "idle" ]; then
 			checking=1
-      $LOGGER "Checking of $dev still in progress"
+      ${LOGGER}debug "Checking of $dev still in progress"
 		fi
 	done
 done
@@ -131,7 +131,8 @@ for dev in $check_list; do
 	fi
 	if [ "$mismatch_cnt" -ne 0 ]; then
 		echo "WARNING: mismatch_cnt is not 0 on /dev/$dev"
-    $LOGGER "WARNING: mismatch_cnt is not 0 on /dev/$dev"
+    ${LOGGER}warning "WARNING: mismatch_cnt is not 0 on /dev/$dev"
 	fi
 done
 
+${LOGGER}info "Complete"
