@@ -35,8 +35,8 @@ config: $(F_CONF)
 	if [ ! -e $(DESTDIR)$(D_CNF)/raid-check.conf ] ; then \
 		install -D -m 0644 raid-check.conf $(DESTDIR)$(D_CNF)/raid-check.conf ; \
 	fi
-	if [ ! -e $(DESTDIR)$(D_CNF)/raid-check ] ; then \
-		install -D -m 0644 raid-check.cron $(DESTDIR)$(D_CNF)/raid-check ; \
+	if [ ! -e $(DESTDIR)$(D_CNF)/cron.d/raid-check ] ; then \
+		install -D -m 0644 raid-check.cron $(DESTDIR)$(D_CNF)/cron.d/raid-check ; \
 	fi
 
 uninstall:
