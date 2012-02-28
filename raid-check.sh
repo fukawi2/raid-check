@@ -15,7 +15,7 @@ PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
 [ "$ENABLED" != "yes" ] && exit 0
 
-LOGGER="logger -t 'raid-check' -i -p user."
+LOGGER="logger -t raid-check -p user."
 ${LOGGER}info "Starting raid-check"
 
 case "$CHECK" in
