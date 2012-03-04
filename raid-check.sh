@@ -47,7 +47,7 @@ active_list=`grep "^md.*: active" /proc/mdstat | cut -f 1 -d ' '`
 [ -z "$active_list" ] && exit 0
 ${LOGGER}info "Active mdadm arrays are $active_list"
 
-declare -A check
+#declare -A check # breaks on older versions of bash
 dev_list=""
 check_list=""
 for dev in $active_list; do
